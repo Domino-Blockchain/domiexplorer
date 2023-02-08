@@ -8,6 +8,8 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+# USE NODE 16.10.0!!
+
 In the project directory, you can run:
 
 ### `npm start`
