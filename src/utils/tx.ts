@@ -50,7 +50,7 @@ export enum PROGRAM_NAMES {
 
   // other
   ACUMEN = "Acumen Program",
-  BREAK_SOLANA = "Break Solana Program",
+  BREAK_SOLANA = "Break Domichain Program",
   CHAINLINK_ORACLE = "Chainlink OCR2 Oracle Program",
   CHAINLINK_STORE = "Chainlink Store Program",
   MANGO_GOVERNANCE = "Mango Governance Program",
@@ -89,7 +89,7 @@ export enum PROGRAM_NAMES {
   SERUM_SWAP = "Serum Swap Program",
   SERUM_POOL = "Serum Pool",
   SOLEND = "Solend Program",
-  SOLIDO = "Lido for Solana Program",
+  SOLIDO = "Lido for Domichain Program",
   STEP_SWAP = "Step Finance Swap Program",
   SWIM_SWAP = "Swim Swap Program",
   SWITCHBOARD = "Switchboard Oracle Program",

@@ -140,7 +140,7 @@ function StakingComponent() {
           </div>
         </div>
       </div>
-      <div className="col-12 col-lg-4 col-xl">
+      <div className="col-12 col-lg-4 col-xl" hidden>
         <div className="card">
           <div className="card-body">
             {solanaInfo && (

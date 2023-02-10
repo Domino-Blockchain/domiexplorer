@@ -32,7 +32,7 @@ export function UnknownAccountCard({ account }: { account: Account }) {
           </tr>
         )}
         <tr>
-          <td>Balance (SOL)</td>
+          <td>Balance (DOMI)</td>
           <td className="text-lg-end">
             {account.lamports === 0 ? (
               "Account does not exist"
