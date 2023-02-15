@@ -1,6 +1,6 @@
 import React from "react";
 import * as Cache from "providers/cache";
-import { Connection, EpochSchedule } from "@solana/web3.js";
+import {Connection, EpochSchedule, VersionedBlockResponse} from "@solana/web3.js";
 import { useCluster, Cluster } from "./cluster";
 import { reportError } from "utils/sentry";
 
@@ -20,6 +20,7 @@ type Epoch = {
   firstTimestamp: number | null;
   lastBlock?: number;
   lastTimestamp: number | null;
+  lastBlocksData: (VersionedBlockResponse | null)[];
 };
 
 type State = Cache.State<Epoch>;
@@ -79,6 +80,8 @@ export async function fetchEpoch(
     const connection = new Connection(url, "confirmed");
     const firstSlot = epochSchedule.getFirstSlotInEpoch(epoch);
     const lastSlot = epochSchedule.getLastSlotInEpoch(epoch);
+    console.log("firstSlot", firstSlot)
+    console.log("lastSlot", lastSlot)
     const [firstBlock, lastBlock] = await Promise.all([
       (async () => {
         const firstBlocks = await connection.getBlocks(
@@ -92,6 +95,7 @@ export async function fetchEpoch(
           Math.max(0, lastSlot - 100),
           lastSlot
         );
+        console.log("lastBlocks", Math.max(0, lastSlot - 100), lastSlot, lastBlocks)
         return lastBlocks.pop();
       })(),
     ]);
@@ -111,11 +115,25 @@ export async function fetchEpoch(
       lastBlock ? connection.getBlockTime(lastBlock) : null,
     ]);
 
+    const lastBlocks = await connection.getBlocks(
+      Math.max(0, lastSlot - 10_000),
+      lastSlot
+    );
+    console.log("lastBlocks", lastBlocks);
+
+    const lastBlocksData = await Promise.all(
+      lastBlocks.slice(-100).map(slot => connection.getBlock(slot, {
+        maxSupportedTransactionVersion: 0,
+      }))
+    );
+    console.log("lastBlocksData", lastBlocksData)
+
     data = {
       firstBlock,
       lastBlock,
       firstTimestamp,
       lastTimestamp,
+      lastBlocksData,
     };
     status = FetchStatus.Fetched;
   } catch (err) {
