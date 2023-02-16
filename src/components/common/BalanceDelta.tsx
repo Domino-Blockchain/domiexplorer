@@ -1,30 +1,30 @@
 import React from "react";
 import { BigNumber } from "bignumber.js";
-import { SolBalance } from "components/common/SolBalance";
+import { DomiBalance } from "components/common/SolBalance";
 
 export function BalanceDelta({
   delta,
-  isSol = false,
+  isDomi = false,
 }: {
   delta: BigNumber;
-  isSol?: boolean;
+  isDomi?: boolean;
 }) {
-  let sols;
+  let domi;
 
-  if (isSol) {
-    sols = <SolBalance lamports={Math.abs(delta.toNumber())} />;
+  if (isDomi) {
+    domi = <DomiBalance lamports={Math.abs(delta.toNumber())} />;
   }
 
   if (delta.gt(0)) {
     return (
       <span className="badge bg-success-soft">
-        +{isSol ? sols : delta.toString()}
+        +{isDomi ? domi : delta.toString()}
       </span>
     );
   } else if (delta.lt(0)) {
     return (
       <span className="badge bg-warning-soft">
-        {isSol ? <>-{sols}</> : delta.toString()}
+        {isDomi ? <>-{domi}</> : delta.toString()}
       </span>
     );
   }

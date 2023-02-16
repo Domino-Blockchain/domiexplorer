@@ -5,7 +5,7 @@ import {
 import { PublicKey } from "@solana/web3.js";
 
 // Switch to web3 constant when web3 updates superstruct
-export const LAMPORTS_PER_SOL = 1_000_000_000;
+export const LAMPORTS_PER_DOMI = 1_000_000_000;
 export const MICRO_LAMPORTS_PER_LAMPORT = 1_000_000;
 
 export const NUM_TICKS_PER_SECOND = 160;
@@ -54,9 +54,9 @@ export function microLamportsToLamportsString(
   );
 }
 
-export function lamportsToSol(lamports: number | bigint): number {
+export function lamportsToDomi(lamports: number | bigint): number {
   if (typeof lamports === "number") {
-    return lamports / LAMPORTS_PER_SOL;
+    return lamports / LAMPORTS_PER_DOMI;
   }
 
   let signMultiplier = 1;
@@ -67,19 +67,19 @@ export function lamportsToSol(lamports: number | bigint): number {
   const absLamports = lamports < 0 ? -lamports : lamports;
   const lamportsString = absLamports.toString(10).padStart(10, "0");
   const splitIndex = lamportsString.length - 9;
-  const solString =
+  const domiString =
     lamportsString.slice(0, splitIndex) +
     "." +
     lamportsString.slice(splitIndex);
-  return signMultiplier * parseFloat(solString);
+  return signMultiplier * parseFloat(domiString);
 }
 
-export function lamportsToSolString(
+export function lamportsToDomiString(
   lamports: number | bigint,
   maximumFractionDigits: number = 9
 ): string {
-  const sol = lamportsToSol(lamports);
-  return new Intl.NumberFormat("en-US", { maximumFractionDigits }).format(sol);
+  const domi = lamportsToDomi(lamports);
+  return new Intl.NumberFormat("en-US", { maximumFractionDigits }).format(domi);
 }
 
 export function numberWithSeparator(s: string) {

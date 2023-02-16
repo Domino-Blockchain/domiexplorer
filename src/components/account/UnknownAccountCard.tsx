@@ -1,6 +1,6 @@
 import React from "react";
 import { Account } from "providers/accounts";
-import { SolBalance } from "components/common/SolBalance";
+import { DomiBalance } from "components/common/SolBalance";
 import { TableCardBody } from "components/common/TableCardBody";
 import { Address } from "components/common/Address";
 import { addressLabel } from "utils/tx";
@@ -37,7 +37,7 @@ export function UnknownAccountCard({ account }: { account: Account }) {
             {account.lamports === 0 ? (
               "Account does not exist"
             ) : (
-              <SolBalance lamports={account.lamports} />
+              <DomiBalance lamports={account.lamports} />
             )}
           </td>
         </tr>

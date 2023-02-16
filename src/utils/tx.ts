@@ -50,7 +50,7 @@ export enum PROGRAM_NAMES {
 
   // other
   ACUMEN = "Acumen Program",
-  BREAK_SOLANA = "Break Domichain Program",
+  BREAK_DOMICHAIN = "Break Domichain Program",
   CHAINLINK_ORACLE = "Chainlink OCR2 Oracle Program",
   CHAINLINK_STORE = "Chainlink Store Program",
   MANGO_GOVERNANCE = "Mango Governance Program",
@@ -97,8 +97,8 @@ export enum PROGRAM_NAMES {
   WORMHOLE_CORE = "Wormhole Core Bridge",
   WORMHOLE_TOKEN = "Wormhole Token Bridge",
   WORMHOLE_NFT = "Wormhole NFT Bridge",
-  SOLANART = "Solanart",
-  SOLANART_GO = "Solanart - Global offers",
+  DOMIART = "Domiart",
+  DOMIART_GO = "Domiart - Global offers",
   STEPN_DEX = "STEPN Dex",
   OPENBOOK_DEX = "OpenBook Dex",
 }
@@ -210,7 +210,7 @@ export const PROGRAM_INFO_BY_ID: { [address: string]: ProgramInfo } = {
     deployments: [Cluster.MainnetBeta],
   },
   BrEAK7zGZ6dM71zUDACDqJnekihmwF15noTddWTsknjC: {
-    name: PROGRAM_NAMES.BREAK_SOLANA,
+    name: PROGRAM_NAMES.BREAK_DOMICHAIN,
     deployments: LIVE_CLUSTERS,
   },
   cjg3oHmg9uuPsP8D6g29NWvhySJkdYdAo9D25PRbKXJ: {
@@ -406,11 +406,11 @@ export const PROGRAM_INFO_BY_ID: { [address: string]: ProgramInfo } = {
     deployments: [Cluster.Devnet],
   },
   CJsLwbP1iu5DuUikHEJnLfANgKy6stB2uFgvBBHoyxwz: {
-    name: PROGRAM_NAMES.SOLANART,
+    name: PROGRAM_NAMES.DOMIART,
     deployments: [Cluster.MainnetBeta],
   },
   "5ZfZAwP2m93waazg8DkrrVmsupeiPEvaEHowiUP7UAbJ": {
-    name: PROGRAM_NAMES.SOLANART_GO,
+    name: PROGRAM_NAMES.DOMIART_GO,
     deployments: [Cluster.MainnetBeta],
   },
   Dooar9JkhdZ7J3LHN3A7YCuoGRUggXhQaG4kijfLGU2j: {

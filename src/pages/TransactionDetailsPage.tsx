@@ -13,7 +13,7 @@ import {
   SystemProgram,
   SystemInstruction,
 } from "@solana/web3.js";
-import { SolBalance } from "components/common/SolBalance";
+import { DomiBalance } from "components/common/SolBalance";
 import { ErrorCard } from "components/common/ErrorCard";
 import { LoadingCard } from "components/common/LoadingCard";
 import { TableCardBody } from "components/common/TableCardBody";
@@ -327,7 +327,7 @@ function StatusCard({
           <tr>
             <td>Fee (DOMI)</td>
             <td className="text-lg-end">
-              <SolBalance lamports={fee} />
+              <DomiBalance lamports={fee} />
             </td>
           </tr>
         )}
@@ -413,10 +413,10 @@ function AccountsCard({ signature }: SignatureProps) {
           <Address pubkey={pubkey} link />
         </td>
         <td>
-          <BalanceDelta delta={delta} isSol />
+          <BalanceDelta delta={delta} isDomi />
         </td>
         <td>
-          <SolBalance lamports={post} />
+          <DomiBalance lamports={post} />
         </td>
         <td>
           {index === 0 && (

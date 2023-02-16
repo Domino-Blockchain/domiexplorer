@@ -5,7 +5,7 @@ import { LoadingCard } from "components/common/LoadingCard";
 import { FetchStatus } from "providers/cache";
 import { ErrorCard } from "components/common/ErrorCard";
 import { Slot } from "components/common/Slot";
-import { lamportsToSolString } from "utils";
+import { lamportsToDomiString } from "utils";
 import { useAccountInfo } from "providers/accounts";
 import { Epoch } from "components/common/Epoch";
 
@@ -64,8 +64,8 @@ export function RewardsCard({ pubkey }: { pubkey: PublicKey }) {
         <td>
           <Slot slot={reward.effectiveSlot} link />
         </td>
-        <td>{lamportsToSolString(reward.amount)}</td>
-        <td>{lamportsToSolString(reward.postBalance)}</td>
+        <td>{lamportsToDomiString(reward.amount)}</td>
+        <td>{lamportsToDomiString(reward.postBalance)}</td>
       </tr>
     );
   });

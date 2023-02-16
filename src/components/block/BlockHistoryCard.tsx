@@ -15,7 +15,7 @@ import { pickClusterParams, useQuery } from "utils/url";
 import { useCluster } from "providers/cluster";
 import { displayAddress } from "utils/tx";
 import { parseProgramLogs } from "utils/program-logs";
-import { SolBalance } from "components/common/SolBalance";
+import { DomiBalance } from "components/common/SolBalance";
 
 const PAGE_SIZE = 25;
 
@@ -293,7 +293,7 @@ export function BlockHistoryCard({ block }: { block: VersionedBlockResponse }) {
 
                     <td className="text-end">
                       {tx.meta !== null ? (
-                        <SolBalance lamports={tx.meta.fee} />
+                        <DomiBalance lamports={tx.meta.fee} />
                       ) : (
                         "Unknown"
                       )}
