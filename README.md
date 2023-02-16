@@ -1,8 +1,6 @@
-???
 <p align="center">
     <img alt="Domichain" src="https://i.imgur.com/GP2V4Of.png" width="250" />
 </p>
-???
 
 # Domi Explorer
 
