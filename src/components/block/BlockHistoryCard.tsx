@@ -16,6 +16,7 @@ import { useCluster } from "providers/cluster";
 import { displayAddress } from "utils/tx";
 import { parseProgramLogs } from "utils/program-logs";
 import { SolBalance } from "components/common/SolBalance";
+import {Slot} from "../common/Slot";
 
 const PAGE_SIZE = 25;
 const MAIN_SCREEN_PAGE_SIZE = 6;
@@ -446,7 +447,7 @@ export function BlockHistoryBody({ blocks }: { blocks: (VersionedBlockResponse |
   ]);
 
   return (
-    <div className="card">
+    <>
       {filteredTransactions.length === 0 ? (
         <div className="card-body">
           {"This epoch doesn't contain any non-vote transactions"}
@@ -583,7 +584,7 @@ export function BlockHistoryBody({ blocks }: { blocks: (VersionedBlockResponse |
           </button>
         </div>
       )}
-    </div>
+    </>
   );
 
   // return (
@@ -665,6 +666,134 @@ export function BlockHistoryBody({ blocks }: { blocks: (VersionedBlockResponse |
   //     })}
   //   </>
   // );
+}
+
+export function MultipleBlocksBody({ blocks }: { blocks: (VersionedBlockResponse | null)[] }) {
+  const [numDisplayed, setNumDisplayed] = React.useState(MAIN_SCREEN_PAGE_SIZE);
+  const query = useQuery();
+  const sortMode = useQuerySort(query);
+  const { cluster } = useCluster();
+  const location = useLocation();
+  const history = useHistory();
+
+  const { filteredBlocks } = React.useMemo(() => {
+    const isNotNull = <T,>(t: T | null): t is T => t !== null;
+    const filteredBlocks: VersionedBlockResponse[] = blocks.filter(isNotNull);
+    filteredBlocks.sort((a, b) => b.parentSlot - a.parentSlot)
+    return { filteredBlocks };
+  }, [blocks]);
+
+  return (
+    <>
+      {filteredBlocks.length === 0 ? (
+        <div className="card-body">
+          {"This epoch doesn't contain any blocks"}
+        </div>
+      ) : (
+        <div className="table-responsive mb-0">
+          <table className="table table-sm table-nowrap card-table">
+            <thead>
+              <tr>
+                <th
+                  className="text-muted c-pointer"
+                  onClick={() => {
+                    query.delete("sort");
+                    history.push(pickClusterParams(location, query));
+                  }}
+                >
+                  Slot #
+                </th>
+                <th className="text-muted">Blockhash</th>
+                <th
+                  className="text-muted text-end c-pointer"
+                  onClick={() => {
+                    query.set("sort", "fee");
+                    history.push(pickClusterParams(location, query));
+                  }}
+                >
+                  Reward
+                </th>
+                <th className="text-muted text-end">Transactions</th>
+              </tr>
+            </thead>
+            <tbody className="list">
+              {filteredBlocks.slice(0, numDisplayed).map((block, i) => {
+                let signature: React.ReactNode;
+
+                if (block.blockhash) {
+                  signature = (
+                    <Signature
+                      signature={block.blockhash}
+                      // link
+                      truncateChars={48}
+                    />
+                  );
+                }
+
+                let rewards = 0;
+                if (block.rewards !== undefined) {
+                  block.rewards.forEach(reward => {
+                    rewards += reward.lamports;
+                  })
+                }
+
+                return (
+                  <tr key={i}>
+                    <td>
+                      <Slot slot={block.parentSlot + 1} link/>
+                    </td>
+
+                    <td>{signature}</td>
+
+                    <td className="text-end">
+                      {block.rewards !== undefined ? (
+                        <SolBalance lamports={rewards} />
+                      ) : (
+                        "Unknown"
+                      )}
+                    </td>
+
+                    <td className="text-end">{block.transactions.length}</td>
+
+                    {/*<td>*/}
+                    {/*  {tx.invocations.size === 0*/}
+                    {/*    ? "NA"*/}
+                    {/*    : entries.map(([programId, count], i) => {*/}
+                    {/*        return (*/}
+                    {/*          <div*/}
+                    {/*            key={i}*/}
+                    {/*            className="d-flex align-items-center"*/}
+                    {/*          >*/}
+                    {/*            <Address*/}
+                    {/*              pubkey={new PublicKey(programId)}*/}
+                    {/*              link*/}
+                    {/*            />*/}
+                    {/*            <span className="ms-2 text-muted">{`(${count})`}</span>*/}
+                    {/*          </div>*/}
+                    {/*        );*/}
+                    {/*      })}*/}
+                    {/*</td>*/}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {filteredBlocks.length > numDisplayed && (
+        <div className="card-footer">
+          <button
+            className="btn btn-primary w-100"
+            onClick={() =>
+              setNumDisplayed((displayed) => displayed + MAIN_SCREEN_PAGE_SIZE)
+            }
+          >
+            Load More
+          </button>
+        </div>
+      )}
+    </>
+  );
 }
 
 type FilterProps = {

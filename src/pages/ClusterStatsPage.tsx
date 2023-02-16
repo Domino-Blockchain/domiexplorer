@@ -19,7 +19,7 @@ import { CoingeckoStatus, useCoinGecko } from "utils/coingecko";
 import { Epoch } from "components/common/Epoch";
 import { TimestampToggle } from "components/common/TimestampToggle";
 import {FetchStatus, useBlock, useFetchBlock} from "../providers/block";
-import {BlockHistoryBody, BlockHistoryCard} from "../components/block/BlockHistoryCard";
+import {BlockHistoryBody, BlockHistoryCard, MultipleBlocksBody} from "../components/block/BlockHistoryCard";
 import {useEpoch, useFetchEpoch} from "../providers/epoch";
 
 const CLUSTER_STATS_TIMEOUT = 5000;
@@ -77,16 +77,8 @@ export function ClusterStatsPage() {
         </div>
         <StatsCardBody />
       </div>
-      <div className="card">
-        <div className="card-header">
-          <div className="row align-items-center">
-            <div className="col">
-              <h4 className="card-header-title">Latest Transactions</h4>
-            </div>
-          </div>
-        </div>
-        <TransactionsCardBody/>
-      </div>
+      <LatestTransactionsCard/>
+      <LatestBlocksCard/>
       <LiveTransactionStatsCard />
     </div>
   );
@@ -253,7 +245,7 @@ function displayLamports(value: number) {
   return abbreviatedNumber(lamportsToSol(value));
 }
 
-function TransactionsCardBody() {
+function LatestTransactionsCard() {
   const dashboardInfo = useDashboardInfo();
   const performanceInfo = usePerformanceInfo();
   const { setActive } = useStatsProvider();
@@ -338,7 +330,163 @@ function TransactionsCardBody() {
   }
 
   return (
-    <BlockHistoryBody blocks={epochState?.data?.lastBlocksData || []} />
+    <div className="card">
+      <div className="card-header">
+        <div className="row align-items-center">
+          <div className="col">
+            <h4 className="card-header-title">Latest Transactions</h4>
+          </div>
+        </div>
+      </div>
+      <BlockHistoryBody blocks={epochState?.data?.lastBlocksData || []} />
+    </div>
+  )
+  // return (
+  //   <TableCardBody>
+  //     <tr>
+  //       <td className="w-100">Slot</td>
+  //       <td className="text-lg-end font-monospace">
+  //         <Slot slot={absoluteSlot} link />
+  //       </td>
+  //     </tr>
+  //     {blockHeight !== undefined && (
+  //       <tr>
+  //         <td className="w-100">Block height</td>
+  //         <td className="text-lg-end font-monospace">
+  //           <Slot slot={blockHeight} />
+  //         </td>
+  //       </tr>
+  //     )}
+  //     {blockTime && (
+  //       <tr>
+  //         <td className="w-100">Cluster time</td>
+  //         <td className="text-lg-end font-monospace">
+  //           <TimestampToggle unixTimestamp={blockTime}></TimestampToggle>
+  //         </td>
+  //       </tr>
+  //     )}
+  //     <tr>
+  //       <td className="w-100">Slot time (1min average)</td>
+  //       <td className="text-lg-end font-monospace">{averageSlotTime}ms</td>
+  //     </tr>
+  //     <tr>
+  //       <td className="w-100">Slot time (1hr average)</td>
+  //       <td className="text-lg-end font-monospace">{hourlySlotTime}ms</td>
+  //     </tr>
+  //     <tr>
+  //       <td className="w-100">Epoch</td>
+  //       <td className="text-lg-end font-monospace">
+  //         <Epoch epoch={epochInfo.epoch} link />
+  //       </td>
+  //     </tr>
+  //     <tr>
+  //       <td className="w-100">Epoch progress</td>
+  //       <td className="text-lg-end font-monospace">{epochProgress}</td>
+  //     </tr>
+  //     <tr>
+  //       <td className="w-100">Epoch time remaining (approx.)</td>
+  //       <td className="text-lg-end font-monospace">~{epochTimeRemaining}</td>
+  //     </tr>
+  //   </TableCardBody>
+  // );
+}
+
+
+function LatestBlocksCard() {
+  const dashboardInfo = useDashboardInfo();
+  const performanceInfo = usePerformanceInfo();
+  const { setActive } = useStatsProvider();
+  const { cluster, clusterInfo, status } = useCluster();
+
+  const {blockHeight, absoluteSlot, epoch: currentEpoch} = dashboardInfo.epochInfo;
+  console.log("dashboardInfo.epochInfo.blockHeight", dashboardInfo.epochInfo.blockHeight)
+  console.log("dashboardInfo.epochInfo.absoluteSlot", dashboardInfo.epochInfo.absoluteSlot)
+  // console.log("performanceInfo", performanceInfo)
+  // console.log("cluster", cluster)
+
+  React.useEffect(() => {
+    setActive(true);
+    return () => setActive(false);
+  }, [setActive, cluster]);
+  React.useEffect(() => {
+    if (blockHeight !== undefined || blockHeight !== 0) {
+      setActive(false);
+    }
+  }, [setActive, blockHeight]);
+
+  ///////////////////////////// Own
+
+
+  ///////// EPOCH
+
+  const epochState = useEpoch(currentEpoch);
+  console.log("epochState?.data?.lastBlocksData", epochState?.data?.lastBlocksData)
+  const fetchEpoch = useFetchEpoch();
+
+  // Fetch extra epoch info on load
+  React.useEffect(() => {
+    if (!clusterInfo) return;
+    const { epochInfo, epochSchedule } = clusterInfo;
+    const currentEpoch = epochInfo.epoch;
+    if (
+      !epochState &&
+      status === ClusterStatus.Connected
+    )
+      fetchEpoch(currentEpoch, currentEpoch, epochSchedule);
+  }, [epochState, clusterInfo, status, fetchEpoch]);
+
+
+  /////////
+
+  const confirmedBlock = useBlock(absoluteSlot);
+  const fetchBlock = useFetchBlock();
+  const refresh = () => {
+    fetchBlock(absoluteSlot)
+  };
+
+  // Fetch block on load
+  React.useEffect(() => {
+    if (!confirmedBlock && status === ClusterStatus.Connected) refresh();
+  }, [absoluteSlot, status]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (!confirmedBlock || confirmedBlock.status === FetchStatus.Fetching) {
+    return <LoadingCard message="Loading block" />;
+  } else if (
+    confirmedBlock.data === undefined ||
+    confirmedBlock.status === FetchStatus.FetchFailed
+  ) {
+    return <ErrorCard retry={refresh} text="Failed to fetch block" />;
+  } else if (confirmedBlock.data.block === undefined) {
+    return <ErrorCard retry={refresh} text={`Block ${absoluteSlot} was not found`} />;
+  }
+
+  const { block, blockLeader, childSlot, childLeader, parentLeader } =
+    confirmedBlock.data;
+
+
+  /////////////////////////////
+
+  if (
+    performanceInfo.status !== ClusterStatsStatus.Ready ||
+    dashboardInfo.status !== ClusterStatsStatus.Ready
+  ) {
+    const error =
+      performanceInfo.status === ClusterStatsStatus.Error ||
+      dashboardInfo.status === ClusterStatsStatus.Error;
+    return <StatsNotReady error={error} />;
+  }
+
+  return (
+    <div className="card">
+      <div className="card-header">
+        <div className="row align-items-center">
+          <div className="col">
+            <h4 className="card-header-title">Latest Blocks</h4>
+          </div>
+        </div>
+      </div>
+      <MultipleBlocksBody blocks={epochState?.data?.lastBlocksData || []} />
+    </div>
   )
   // return (
   //   <TableCardBody>
