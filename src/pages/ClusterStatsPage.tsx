@@ -7,7 +7,7 @@ import {
   usePerformanceInfo,
   useStatsProvider,
 } from "providers/stats/solanaClusterStats";
-import { abbreviatedNumber, lamportsToSol, slotsToHumanString } from "utils";
+import { abbreviatedNumber, lamportsToDomi, slotsToHumanString } from "utils";
 import { ClusterStatus, useCluster } from "providers/cluster";
 import { LiveTransactionStatsCard } from "components/LiveTransactionStatsCard";
 import { displayTimestampWithoutDate } from "utils/date";
@@ -88,7 +88,7 @@ function StakingComponent() {
   const { status } = useCluster();
   const supply = useSupply();
   const fetchSupply = useFetchSupply();
-  const coinInfo = useCoinGecko("solana");
+  const coinInfo = useCoinGecko("domichain");
   const { fetchVoteAccounts, voteAccounts } = useVoteAccounts();
 
   function fetchData() {
@@ -145,9 +145,9 @@ function StakingComponent() {
     );
   }
 
-  let solanaInfo;
+  let domichainInfo;
   if (coinInfo.status === CoingeckoStatus.Success) {
-    solanaInfo = coinInfo.coinInfo;
+    domichainInfo = coinInfo.coinInfo;
   }
 
   return (
@@ -187,35 +187,35 @@ function StakingComponent() {
       <div className="col-12 col-lg-4 col-xl" hidden>
         <div className="card">
           <div className="card-body">
-            {solanaInfo && (
+            {domichainInfo && (
               <>
                 <h4>
                   Price{" "}
                   <span className="ms-2 badge bg-primary rank">
-                    Rank #{solanaInfo.market_cap_rank}
+                    Rank #{domichainInfo.market_cap_rank}
                   </span>
                 </h4>
                 <h1>
-                  <em>${solanaInfo.price.toFixed(2)}</em>{" "}
-                  {solanaInfo.price_change_percentage_24h > 0 && (
+                  <em>${domichainInfo.price.toFixed(2)}</em>{" "}
+                  {domichainInfo.price_change_percentage_24h > 0 && (
                     <small className="change-positive">
-                      &uarr; {solanaInfo.price_change_percentage_24h.toFixed(2)}
+                      &uarr; {domichainInfo.price_change_percentage_24h.toFixed(2)}
                       %
                     </small>
                   )}
-                  {solanaInfo.price_change_percentage_24h < 0 && (
+                  {domichainInfo.price_change_percentage_24h < 0 && (
                     <small className="change-negative">
-                      &darr; {solanaInfo.price_change_percentage_24h.toFixed(2)}
+                      &darr; {domichainInfo.price_change_percentage_24h.toFixed(2)}
                       %
                     </small>
                   )}
-                  {solanaInfo.price_change_percentage_24h === 0 && (
+                  {domichainInfo.price_change_percentage_24h === 0 && (
                     <small>0%</small>
                   )}
                 </h1>
                 <h5>
-                  24h Vol: <em>${abbreviatedNumber(solanaInfo.volume_24)}</em>{" "}
-                  MCap: <em>${abbreviatedNumber(solanaInfo.market_cap)}</em>
+                  24h Vol: <em>${abbreviatedNumber(domichainInfo.volume_24)}</em>{" "}
+                  MCap: <em>${abbreviatedNumber(domichainInfo.market_cap)}</em>
                 </h5>
               </>
             )}
@@ -228,10 +228,10 @@ function StakingComponent() {
                 <h5>Error fetching the latest price information</h5>
               </>
             )}
-            {solanaInfo && (
+            {domichainInfo && (
               <p className="updated-time text-muted">
                 Updated at{" "}
-                {displayTimestampWithoutDate(solanaInfo.last_updated.getTime())}
+                {displayTimestampWithoutDate(domichainInfo.last_updated.getTime())}
               </p>
             )}
           </div>
@@ -242,7 +242,7 @@ function StakingComponent() {
 }
 
 function displayLamports(value: number) {
-  return abbreviatedNumber(lamportsToSol(value));
+  return abbreviatedNumber(lamportsToDomi(value));
 }
 
 function LatestTransactionsCard() {

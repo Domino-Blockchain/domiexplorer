@@ -2,7 +2,7 @@ import React from "react";
 import { useSupply, useFetchSupply, Status } from "providers/supply";
 import { LoadingCard } from "./common/LoadingCard";
 import { ErrorCard } from "./common/ErrorCard";
-import { SolBalance } from "components/common/SolBalance";
+import { DomiBalance } from "components/common/SolBalance";
 import { TableCardBody } from "./common/TableCardBody";
 
 export function SupplyCard() {
@@ -33,14 +33,14 @@ export function SupplyCard() {
         <tr>
           <td className="w-100">Total Supply (DOMI)</td>
           <td className="text-lg-end">
-            <SolBalance lamports={supply.total} maximumFractionDigits={0} />
+            <DomiBalance lamports={supply.total} maximumFractionDigits={0} />
           </td>
         </tr>
 
         <tr>
           <td className="w-100">Circulating Supply (DOMI)</td>
           <td className="text-lg-end">
-            <SolBalance
+            <DomiBalance
               lamports={supply.circulating}
               maximumFractionDigits={0}
             />
@@ -50,7 +50,7 @@ export function SupplyCard() {
         <tr>
           <td className="w-100">Non-Circulating Supply (DOMI)</td>
           <td className="text-lg-end">
-            <SolBalance
+            <DomiBalance
               lamports={supply.nonCirculating}
               maximumFractionDigits={0}
             />

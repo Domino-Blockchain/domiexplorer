@@ -1,8 +1,6 @@
-???
 <p align="center">
-    <img alt="Solana" src="https://i.imgur.com/IKyzQ6T.png" width="250" />
+    <img alt="Domichain" src="https://i.imgur.com/GP2V4Of.png" width="250" />
 </p>
-???
 
 # Domi Explorer
 
@@ -45,13 +43,13 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 
 All claims, content, designs, algorithms, estimates, roadmaps,
 specifications, and performance measurements described in this project
-are done with the Domi ???Foundation's??? best efforts. It is up to
+are done with the Domi Foundation's best efforts. It is up to
 the reader to check and validate their accuracy and truthfulness.
 Furthermore nothing in this project constitutes a solicitation for
 investment.
 
-Any content produced by ???DCF??? or developer resources that ???DCF??? provides, are
-for educational and inspiration purposes only. ???DCF??? does not encourage,
+Any content produced by DF or developer resources that DF provides, are
+for educational and inspiration purposes only. DF does not encourage,
 induce or sanction the deployment, integration or use of any such
 applications (including the code comprising the Domichain blockchain
 protocol) in violation of applicable laws or regulations and hereby

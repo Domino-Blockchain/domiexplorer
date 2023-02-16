@@ -1,5 +1,5 @@
 import React from "react";
-import { SolBalance } from "components/common/SolBalance";
+import { DomiBalance } from "components/common/SolBalance";
 import { Epoch } from "components/common/Epoch";
 import {
   SysvarAccount,
@@ -60,13 +60,13 @@ const renderAccountRow = (entry: StakeHistoryEntry, index: number) => {
         <Epoch epoch={entry.epoch} link />
       </td>
       <td className="font-monospace">
-        <SolBalance lamports={entry.stakeHistory.effective} />
+        <DomiBalance lamports={entry.stakeHistory.effective} />
       </td>
       <td className="font-monospace">
-        <SolBalance lamports={entry.stakeHistory.activating} />
+        <DomiBalance lamports={entry.stakeHistory.activating} />
       </td>
       <td className="font-monospace">
-        <SolBalance lamports={entry.stakeHistory.deactivating} />
+        <DomiBalance lamports={entry.stakeHistory.deactivating} />
       </td>
     </tr>
   );

@@ -1,6 +1,6 @@
 import React from "react";
 import { TableCardBody } from "components/common/TableCardBody";
-import { SolBalance } from "components/common/SolBalance";
+import { DomiBalance } from "components/common/SolBalance";
 import { displayTimestampUtc } from "utils/date";
 import { Account, useFetchAccountInfo } from "providers/accounts";
 import { Address } from "components/common/Address";
@@ -125,13 +125,13 @@ function OverviewCard({
         <tr>
           <td>Balance (DOMI)</td>
           <td className="text-lg-end text-uppercase">
-            <SolBalance lamports={account.lamports} />
+            <DomiBalance lamports={account.lamports} />
           </td>
         </tr>
         <tr>
           <td>Rent Reserve (DOMI)</td>
           <td className="text-lg-end">
-            <SolBalance lamports={stakeAccount.meta.rentExemptReserve} />
+            <DomiBalance lamports={stakeAccount.meta.rentExemptReserve} />
           </td>
         </tr>
         {hideDelegation && (
@@ -190,7 +190,7 @@ function DelegationCard({
             <tr>
               <td>Delegated Stake (DOMI)</td>
               <td className="text-lg-end">
-                <SolBalance lamports={stake.delegation.stake} />
+                <DomiBalance lamports={stake.delegation.stake} />
               </td>
             </tr>
 
@@ -199,14 +199,14 @@ function DelegationCard({
                 <tr>
                   <td>Active Stake (DOMI)</td>
                   <td className="text-lg-end">
-                    <SolBalance lamports={activation.active} />
+                    <DomiBalance lamports={activation.active} />
                   </td>
                 </tr>
 
                 <tr>
                   <td>Inactive Stake (DOMI)</td>
                   <td className="text-lg-end">
-                    <SolBalance lamports={activation.inactive} />
+                    <DomiBalance lamports={activation.inactive} />
                   </td>
                 </tr>
               </>

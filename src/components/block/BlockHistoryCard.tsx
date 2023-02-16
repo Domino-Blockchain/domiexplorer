@@ -15,7 +15,7 @@ import { pickClusterParams, useQuery } from "utils/url";
 import { useCluster } from "providers/cluster";
 import { displayAddress } from "utils/tx";
 import { parseProgramLogs } from "utils/program-logs";
-import { SolBalance } from "components/common/SolBalance";
+import { DomiBalance } from "components/common/SolBalance";
 import {Slot} from "../common/Slot";
 import Moment from "react-moment";
 
@@ -212,7 +212,6 @@ export function BlockHistoryCard({ block }: { block: VersionedBlockResponse }) {
         </div>
       )}
 
-      {/*// filteredTransactions*/}
       {filteredTransactions.length === 0 ? (
         <div className="card-body">
           {accountFilter === null && programFilter === HIDE_VOTES
@@ -297,7 +296,7 @@ export function BlockHistoryCard({ block }: { block: VersionedBlockResponse }) {
 
                     <td className="text-end">
                       {tx.meta !== null ? (
-                        <SolBalance lamports={tx.meta.fee} />
+                        <DomiBalance lamports={tx.meta.fee} />
                       ) : (
                         "Unknown"
                       )}

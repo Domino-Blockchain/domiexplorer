@@ -423,7 +423,7 @@ function TokenAccountCard({
 
   let unit, balance;
   if (info.isNative) {
-    unit = "SOL";
+    unit = "DOMI";
     balance = (
       <>
         ◎
