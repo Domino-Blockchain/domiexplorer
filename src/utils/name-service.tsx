@@ -10,8 +10,8 @@ import {
 import { useState, useEffect } from "react";
 import { Cluster, useCluster } from "providers/cluster";
 
-// Address of the SOL TLD
-const SOL_TLD_AUTHORITY = new PublicKey(
+// Address of the DOMI TLD
+const DOMI_TLD_AUTHORITY = new PublicKey(
   "58PwtjSDuFHuUkYjH9BYnnQKHfwo9reZhC2zMJv9JPkx"
 );
 
@@ -20,7 +20,7 @@ export interface DomainInfo {
   address: PublicKey;
 }
 export const hasDomainSyntax = (value: string) => {
-  return value.length > 4 && value.substring(value.length - 4) === ".sol";
+  return value.length > 5 && value.substring(value.length - 5) === ".domi";
 };
 
 async function getDomainKey(
@@ -37,12 +37,12 @@ async function getDomainKey(
   return nameKey;
 }
 
-// returns non empty wallet string if a given .sol domain is owned by a wallet
+// returns non empty wallet string if a given .domi domain is owned by a wallet
 export async function getDomainInfo(domain: string, connection: Connection) {
   const domainKey = await getDomainKey(
-    domain.slice(0, -4), // remove .sol
+    domain.slice(0, -5), // remove .domi
     undefined,
-    SOL_TLD_AUTHORITY
+    DOMI_TLD_AUTHORITY
   );
   try {
     const registry = await getNameOwner(connection, domainKey);
@@ -66,7 +66,7 @@ async function getUserDomainAddresses(
     {
       memcmp: {
         offset: 0,
-        bytes: SOL_TLD_AUTHORITY.toBase58(),
+        bytes: DOMI_TLD_AUTHORITY.toBase58(),
       },
     },
     // owner
@@ -107,7 +107,7 @@ export const useUserDomains = (
           userDomainAddresses.map(async (address) => {
             const domainName = await performReverseLookup(connection, address);
             return {
-              name: `${domainName}.sol`,
+              name: `${domainName}.domi`,
               address,
             };
           })
