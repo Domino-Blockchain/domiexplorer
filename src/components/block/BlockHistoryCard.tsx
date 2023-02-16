@@ -17,6 +17,7 @@ import { displayAddress } from "utils/tx";
 import { parseProgramLogs } from "utils/program-logs";
 import { SolBalance } from "components/common/SolBalance";
 import {Slot} from "../common/Slot";
+import Moment from "react-moment";
 
 const PAGE_SIZE = 25;
 const MAIN_SCREEN_PAGE_SIZE = 6;
@@ -693,13 +694,13 @@ export function MultipleBlocksBody({ blocks }: { blocks: (VersionedBlockResponse
             <thead>
               <tr>
                 <th
-                  className="text-muted c-pointer"
+                  className="text-muted w-1"
                   onClick={() => {
                     query.delete("sort");
                     history.push(pickClusterParams(location, query));
                   }}
                 >
-                  Slot #
+                  Block
                 </th>
                 <th className="text-muted">Blockhash</th>
                 <th
@@ -711,7 +712,8 @@ export function MultipleBlocksBody({ blocks }: { blocks: (VersionedBlockResponse
                 >
                   Reward
                 </th>
-                <th className="text-muted text-end">Transactions</th>
+                <th className="text-muted">Transactions</th>
+                <th className="text-muted w-1">Age</th>
               </tr>
             </thead>
             <tbody className="list">
@@ -737,8 +739,8 @@ export function MultipleBlocksBody({ blocks }: { blocks: (VersionedBlockResponse
 
                 return (
                   <tr key={i}>
-                    <td>
-                      <Slot slot={block.parentSlot + 1} link/>
+                    <td className="w-1">
+                      <Slot slot={block.parentSlot + 1} link />
                     </td>
 
                     <td>{signature}</td>
@@ -751,7 +753,11 @@ export function MultipleBlocksBody({ blocks }: { blocks: (VersionedBlockResponse
                       )}
                     </td>
 
-                    <td className="text-end">{block.transactions.length}</td>
+                    <td>{block.transactions.length}</td>
+
+                    <td className="text-muted">
+                      {block.blockTime ? <Moment date={block.blockTime * 1000} fromNow /> : "---"}
+                    </td>
 
                     {/*<td>*/}
                     {/*  {tx.invocations.size === 0*/}
