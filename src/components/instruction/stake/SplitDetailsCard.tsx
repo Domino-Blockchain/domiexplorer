@@ -4,7 +4,7 @@ import {
   StakeProgram,
   ParsedInstruction,
 } from "@solana/web3.js";
-import { DomiBalance } from "components/common/SolBalance";
+import { DomiBalance } from "components/common/DomiBalance";
 import { InstructionCard } from "../InstructionCard";
 import { Address } from "components/common/Address";
 import { SplitInfo } from "./types";

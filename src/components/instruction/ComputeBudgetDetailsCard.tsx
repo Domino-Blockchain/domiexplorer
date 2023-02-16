@@ -5,7 +5,7 @@ import {
   TransactionInstruction,
 } from "@solana/web3.js";
 import { InstructionCard } from "./InstructionCard";
-import { DomiBalance } from "components/common/SolBalance";
+import { DomiBalance } from "components/common/DomiBalance";
 import { Address } from "components/common/Address";
 import { reportError } from "utils/sentry";
 import { microLamportsToLamportsString } from "utils";

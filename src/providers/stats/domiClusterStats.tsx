@@ -5,12 +5,12 @@ import {
   DashboardInfo,
   DashboardInfoActionType,
   dashboardInfoReducer,
-} from "./solanaDashboardInfo";
+} from "./domiDashboardInfo";
 import {
   PerformanceInfo,
   PerformanceInfoActionType,
   performanceInfoReducer,
-} from "./solanaPerformanceInfo";
+} from "./domiPerformanceInfo";
 import { reportError } from "utils/sentry";
 
 export const PERF_UPDATE_SEC = 5;
@@ -81,7 +81,7 @@ function getConnection(url: string): Connection | undefined {
   } catch (error) {}
 }
 
-export function SolanaClusterStatsProvider({ children }: Props) {
+export function DomiClusterStatsProvider({ children }: Props) {
   const { cluster, url } = useCluster();
   const [active, setActive] = React.useState(false);
   const [dashboardInfo, dispatchDashboardInfo] = React.useReducer(

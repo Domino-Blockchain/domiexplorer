@@ -2,7 +2,7 @@ import React from "react";
 import { PACKET_DATA_SIZE, VersionedMessage } from "@solana/web3.js";
 
 import { TableCardBody } from "components/common/TableCardBody";
-import { DomiBalance } from "components/common/SolBalance";
+import { DomiBalance } from "components/common/DomiBalance";
 import { useQuery } from "utils/url";
 import { useHistory, useLocation } from "react-router";
 import {

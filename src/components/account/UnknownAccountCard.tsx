@@ -1,6 +1,6 @@
 import React from "react";
 import { Account } from "providers/accounts";
-import { DomiBalance } from "components/common/SolBalance";
+import { DomiBalance } from "components/common/DomiBalance";
 import { TableCardBody } from "components/common/TableCardBody";
 import { Address } from "components/common/Address";
 import { addressLabel } from "utils/tx";

@@ -1,5 +1,5 @@
 import React from "react";
-import { DomiBalance } from "components/common/SolBalance";
+import { DomiBalance } from "components/common/DomiBalance";
 import { PublicKey, VersionedBlockResponse } from "@solana/web3.js";
 import { Address } from "components/common/Address";
 

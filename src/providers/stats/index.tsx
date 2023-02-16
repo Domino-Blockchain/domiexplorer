@@ -1,12 +1,12 @@
-import { SolanaPingProvider } from "providers/stats/SolanaPingProvider";
+import { SolanaPingProvider } from "providers/stats/DomiPingProvider";
 import React from "react";
-import { SolanaClusterStatsProvider } from "./solanaClusterStats";
+import { DomiClusterStatsProvider } from "./domiClusterStats";
 
 type Props = { children: React.ReactNode };
 export function StatsProvider({ children }: Props) {
   return (
-    <SolanaClusterStatsProvider>
+    <DomiClusterStatsProvider>
       <SolanaPingProvider>{children}</SolanaPingProvider>
-    </SolanaClusterStatsProvider>
+    </DomiClusterStatsProvider>
   );
 }

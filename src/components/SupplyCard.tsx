@@ -2,7 +2,7 @@ import React from "react";
 import { useSupply, useFetchSupply, Status } from "providers/supply";
 import { LoadingCard } from "./common/LoadingCard";
 import { ErrorCard } from "./common/ErrorCard";
-import { DomiBalance } from "components/common/SolBalance";
+import { DomiBalance } from "components/common/DomiBalance";
 import { TableCardBody } from "./common/TableCardBody";
 
 export function SupplyCard() {

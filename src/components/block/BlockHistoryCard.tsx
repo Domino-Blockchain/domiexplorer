@@ -15,7 +15,7 @@ import { pickClusterParams, useQuery } from "utils/url";
 import { useCluster } from "providers/cluster";
 import { displayAddress } from "utils/tx";
 import { parseProgramLogs } from "utils/program-logs";
-import { DomiBalance } from "components/common/SolBalance";
+import { DomiBalance } from "components/common/DomiBalance";
 import {Slot} from "../common/Slot";
 import Moment from "react-moment";
 
@@ -530,7 +530,7 @@ export function BlockHistoryBody({ blocks }: { blocks: (VersionedBlockResponse |
 
                     <td className="text-end">
                       {tx.meta !== null ? (
-                        <SolBalance lamports={tx.meta.fee} />
+                        <DomiBalance lamports={tx.meta.fee} />
                       ) : (
                         "Unknown"
                       )}
@@ -627,7 +627,7 @@ export function BlockHistoryBody({ blocks }: { blocks: (VersionedBlockResponse |
   //
   //           <td className="text-end">
   //             {tx.meta !== null ? (
-  //               <SolBalance lamports={tx.meta.fee} />
+  //               <DomiBalance lamports={tx.meta.fee} />
   //             ) : (
   //               "Unknown"
   //             )}
@@ -746,7 +746,7 @@ export function MultipleBlocksBody({ blocks }: { blocks: (VersionedBlockResponse
 
                     <td className="text-end">
                       {block.rewards !== undefined ? (
-                        <SolBalance lamports={rewards} />
+                        <DomiBalance lamports={rewards} />
                       ) : (
                         "Unknown"
                       )}

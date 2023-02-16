@@ -6,7 +6,7 @@ import {
   useDashboardInfo,
   usePerformanceInfo,
   useStatsProvider,
-} from "providers/stats/solanaClusterStats";
+} from "providers/stats/domiClusterStats";
 import { abbreviatedNumber, lamportsToDomi, slotsToHumanString } from "utils";
 import { ClusterStatus, useCluster } from "providers/cluster";
 import { LiveTransactionStatsCard } from "components/LiveTransactionStatsCard";
