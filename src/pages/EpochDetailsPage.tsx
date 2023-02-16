@@ -70,8 +70,6 @@ function EpochOverviewCard({ epoch }: OverviewProps) {
   const firstSlot = epochSchedule.getFirstSlotInEpoch(epoch);
   const lastSlot = epochSchedule.getLastSlotInEpoch(epoch);
 
-  console.log("epochState", epochState)
-
   return (
     <>
       <div className="card">

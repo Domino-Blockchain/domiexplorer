@@ -19,7 +19,7 @@ import { CoingeckoStatus, useCoinGecko } from "utils/coingecko";
 import { Epoch } from "components/common/Epoch";
 import { TimestampToggle } from "components/common/TimestampToggle";
 import {FetchStatus, useBlock, useFetchBlock} from "../providers/block";
-import {BlockHistoryBody, BlockHistoryCard, MultipleBlocksBody} from "../components/block/BlockHistoryCard";
+import {BlockHistoryBody, MultipleBlocksBody} from "../components/block/BlockHistoryCard";
 import {useEpoch, useFetchEpoch} from "../providers/epoch";
 
 const CLUSTER_STATS_TIMEOUT = 5000;
@@ -252,10 +252,6 @@ function LatestTransactionsCard() {
   const { cluster, clusterInfo, status } = useCluster();
 
   const {blockHeight, absoluteSlot, epoch: currentEpoch} = dashboardInfo.epochInfo;
-  console.log("dashboardInfo.epochInfo.blockHeight", dashboardInfo.epochInfo.blockHeight)
-  console.log("dashboardInfo.epochInfo.absoluteSlot", dashboardInfo.epochInfo.absoluteSlot)
-  // console.log("performanceInfo", performanceInfo)
-  // console.log("cluster", cluster)
 
   React.useEffect(() => {
     setActive(true);
@@ -273,7 +269,6 @@ function LatestTransactionsCard() {
   ///////// EPOCH
 
   const epochState = useEpoch(currentEpoch);
-  console.log("epochState?.data?.lastBlocksData", epochState?.data?.lastBlocksData)
   const fetchEpoch = useFetchEpoch();
 
   // Fetch extra epoch info on load
@@ -312,10 +307,6 @@ function LatestTransactionsCard() {
   } else if (confirmedBlock.data.block === undefined) {
     return <ErrorCard retry={refresh} text={`Block ${absoluteSlot} was not found`} />;
   }
-
-  const { block, blockLeader, childSlot, childLeader, parentLeader } =
-    confirmedBlock.data;
-
 
   /////////////////////////////
 
@@ -399,10 +390,6 @@ function LatestBlocksCard() {
   const { cluster, clusterInfo, status } = useCluster();
 
   const {blockHeight, absoluteSlot, epoch: currentEpoch} = dashboardInfo.epochInfo;
-  console.log("dashboardInfo.epochInfo.blockHeight", dashboardInfo.epochInfo.blockHeight)
-  console.log("dashboardInfo.epochInfo.absoluteSlot", dashboardInfo.epochInfo.absoluteSlot)
-  // console.log("performanceInfo", performanceInfo)
-  // console.log("cluster", cluster)
 
   React.useEffect(() => {
     setActive(true);
@@ -420,7 +407,6 @@ function LatestBlocksCard() {
   ///////// EPOCH
 
   const epochState = useEpoch(currentEpoch);
-  console.log("epochState?.data?.lastBlocksData", epochState?.data?.lastBlocksData)
   const fetchEpoch = useFetchEpoch();
 
   // Fetch extra epoch info on load
@@ -459,10 +445,6 @@ function LatestBlocksCard() {
   } else if (confirmedBlock.data.block === undefined) {
     return <ErrorCard retry={refresh} text={`Block ${absoluteSlot} was not found`} />;
   }
-
-  const { block, blockLeader, childSlot, childLeader, parentLeader } =
-    confirmedBlock.data;
-
 
   /////////////////////////////
 

@@ -671,8 +671,6 @@ export function BlockHistoryBody({ blocks }: { blocks: (VersionedBlockResponse |
 export function MultipleBlocksBody({ blocks }: { blocks: (VersionedBlockResponse | null)[] }) {
   const [numDisplayed, setNumDisplayed] = React.useState(MAIN_SCREEN_PAGE_SIZE);
   const query = useQuery();
-  const sortMode = useQuerySort(query);
-  const { cluster } = useCluster();
   const location = useLocation();
   const history = useHistory();
 
