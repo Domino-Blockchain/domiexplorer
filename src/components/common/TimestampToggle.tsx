@@ -39,8 +39,8 @@ export function TimestampToggle({ unixTimestamp }: { unixTimestamp: number }) {
         onMouseOut={() => toggleTooltip("hide")}
       >
         {isTimestampTypeUtc === true
-          ? displayTimestampUtc(unixTimestamp)
-          : displayTimestamp(unixTimestamp)}
+          ? displayTimestampUtc(unixTimestamp, true)
+          : displayTimestamp(unixTimestamp, true)}
       </span>
       <Tooltip state={showTooltip} />
     </div>

@@ -66,19 +66,25 @@ export function ClusterStatsPage() {
 
   return (
     <div className="container mt-4">
-      <StakingComponent />
-      <div className="card">
-        <div className="card-header">
-          <div className="row align-items-center">
-            <div className="col">
-              <h4 className="card-header-title">Live Cluster Stats</h4>
+      {/*<StakingComponent /> // TODO: get API sources*/}
+      <div className="row">
+        <div className="col-12 col-lg-6">
+          <div className="card">
+            <div className="card-header">
+              <div className="row align-items-center">
+                <div className="col">
+                  <h4 className="card-header-title">Live Cluster Stats</h4>
+                </div>
+              </div>
             </div>
+            <StatsCardBody />
           </div>
         </div>
-        <StatsCardBody />
+        <div className="col-12 col-lg-6">
+          <LatestTransactionsCard/>
+          <LatestBlocksCard/>
+        </div>
       </div>
-      <LatestTransactionsCard/>
-      <LatestBlocksCard/>
       <LiveTransactionStatsCard />
     </div>
   );
@@ -407,19 +413,20 @@ function LatestBlocksCard() {
   ///////// EPOCH
 
   const epochState = useEpoch(currentEpoch);
-  const fetchEpoch = useFetchEpoch();
+  // FIXME: dont load epoch twice here
+  // const fetchEpoch = useFetchEpoch();
 
   // Fetch extra epoch info on load
-  React.useEffect(() => {
-    if (!clusterInfo) return;
-    const { epochInfo, epochSchedule } = clusterInfo;
-    const currentEpoch = epochInfo.epoch;
-    if (
-      !epochState &&
-      status === ClusterStatus.Connected
-    )
-      fetchEpoch(currentEpoch, currentEpoch, epochSchedule);
-  }, [epochState, clusterInfo, status, fetchEpoch]);
+  // React.useEffect(() => {
+  //   if (!clusterInfo) return;
+  //   const { epochInfo, epochSchedule } = clusterInfo;
+  //   const currentEpoch = epochInfo.epoch;
+  //   if (
+  //     !epochState &&
+  //     status === ClusterStatus.Connected
+  //   )
+  //     fetchEpoch(currentEpoch, currentEpoch, epochSchedule);
+  // }, [epochState, clusterInfo, status, fetchEpoch]);
 
 
   /////////

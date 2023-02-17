@@ -18,6 +18,28 @@ import { parseProgramLogs } from "utils/program-logs";
 import { DomiBalance } from "components/common/DomiBalance";
 import {Slot} from "../common/Slot";
 import Moment from "react-moment";
+import moment from "moment";
+
+moment.locale("en");
+moment.updateLocale("en", {
+  relativeTime: {
+    future: "in %s",
+    past: "%s ago",
+    s: "%ds",
+    ss: '%ds',
+    m: "1m",
+    mm: "%dm",
+    h: "1h",
+    hh: "%dh",
+    d: "1d",
+    dd: "%dd",
+    M: "a month",
+    MM: "%d months",
+    y: "a year",
+    yy: "%d years"
+  }
+});
+Moment.globalMoment = moment;
 
 const PAGE_SIZE = 25;
 const MAIN_SCREEN_PAGE_SIZE = 6;
@@ -467,7 +489,7 @@ export function BlockHistoryBody({ blocks }: { blocks: (VersionedBlockResponse |
                   #
                 </th>
                 <th className="text-muted">Result</th>
-                <th className="text-muted">Transaction Signature</th>
+                <th className="text-muted">Tx Signature</th>
                 <th
                   className="text-muted text-end c-pointer"
                   onClick={() => {
@@ -509,7 +531,7 @@ export function BlockHistoryBody({ blocks }: { blocks: (VersionedBlockResponse |
                     <Signature
                       signature={tx.signature}
                       link
-                      truncateChars={48}
+                      truncateChars={6}
                     />
                   );
                 }
@@ -711,7 +733,7 @@ export function MultipleBlocksBody({ blocks }: { blocks: (VersionedBlockResponse
                 >
                   Reward
                 </th>
-                <th className="text-muted">Transactions</th>
+                <th className="text-muted">TX NUM</th>
                 <th className="text-muted w-1">Age</th>
               </tr>
             </thead>
@@ -723,8 +745,7 @@ export function MultipleBlocksBody({ blocks }: { blocks: (VersionedBlockResponse
                   signature = (
                     <Signature
                       signature={block.blockhash}
-                      // link
-                      truncateChars={48}
+                      truncateChars={6}
                     />
                   );
                 }
