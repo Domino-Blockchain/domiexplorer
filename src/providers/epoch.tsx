@@ -117,8 +117,9 @@ export async function fetchEpoch(
       lastSlot
     );
 
+    // TODO: increase performance here
     const lastBlocksData = await Promise.all(
-      lastBlocks.slice(-100).map(slot => connection.getBlock(slot, {
+      lastBlocks.slice(-48).map(slot => connection.getBlock(slot, {
         maxSupportedTransactionVersion: 0,
       }))
     );

@@ -12,7 +12,7 @@ function getPingUrl(cluster: Cluster) {
     return undefined;
   }
 
-  return `https://ping.solana.com/${slug}/last6hours`;
+  return `https://ping.solana.com/${slug}/last6hours`; // TODO: Use Domi Ping Service
 }
 
 export type PingMetric = {

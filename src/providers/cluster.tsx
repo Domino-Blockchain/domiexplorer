@@ -56,7 +56,7 @@ export function clusterName(cluster: Cluster): string {
   }
 }
 
-export const MAINNET_BETA_URL = clusterApiUrl("mainnet-beta");
+export const MAINNET_BETA_URL = "http://3.18.89.242:8899/";
 export const TESTNET_URL = "http://localhost:8899";
 export const DEVNET_URL = clusterApiUrl("devnet");
 
@@ -82,7 +82,7 @@ export function clusterUrl(cluster: Cluster, customUrl: string): string {
 }
 
 export const DEFAULT_CLUSTER = Cluster.MainnetBeta;
-const DEFAULT_CUSTOM_URL = "http://localhost:8899";
+const DEFAULT_CUSTOM_URL = "http://3.18.89.242:8899";
 
 type Action = State;
 interface State {
