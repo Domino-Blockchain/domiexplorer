@@ -4,7 +4,7 @@ import {
   SignatureResult,
   ParsedInstruction,
 } from "@solana/web3.js";
-import { SolBalance } from "components/common/SolBalance";
+import { DomiBalance } from "components/common/DomiBalance";
 import { InstructionCard } from "../InstructionCard";
 import { Address } from "components/common/Address";
 import { WithdrawNonceInfo } from "./types";
@@ -57,9 +57,9 @@ export function NonceWithdrawDetailsCard(props: {
       </tr>
 
       <tr>
-        <td>Withdraw Amount (SOL)</td>
+        <td>Withdraw Amount (DOMI)</td>
         <td className="text-lg-end">
-          <SolBalance lamports={info.lamports} />
+          <DomiBalance lamports={info.lamports} />
         </td>
       </tr>
     </InstructionCard>

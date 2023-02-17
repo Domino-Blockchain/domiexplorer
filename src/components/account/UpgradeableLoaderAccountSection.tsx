@@ -1,6 +1,6 @@
 import React from "react";
 import { TableCardBody } from "components/common/TableCardBody";
-import { SolBalance } from "components/common/SolBalance";
+import { DomiBalance } from "components/common/DomiBalance";
 import { Account, useFetchAccountInfo } from "providers/accounts";
 import { Address } from "components/common/Address";
 import {
@@ -102,9 +102,9 @@ export function UpgradeableProgramSection({
           </tr>
         )}
         <tr>
-          <td>Balance (SOL)</td>
+          <td>Balance (DOMI)</td>
           <td className="text-lg-end text-uppercase">
-            <SolBalance lamports={account.lamports} />
+            <DomiBalance lamports={account.lamports} />
           </td>
         </tr>
         <tr>
@@ -233,9 +233,9 @@ export function UpgradeableProgramDataSection({
           </td>
         </tr>
         <tr>
-          <td>Balance (SOL)</td>
+          <td>Balance (DOMI)</td>
           <td className="text-lg-end text-uppercase">
-            <SolBalance lamports={account.lamports} />
+            <DomiBalance lamports={account.lamports} />
           </td>
         </tr>
         {account.space !== undefined && (
@@ -307,9 +307,9 @@ export function UpgradeableProgramBufferSection({
           </td>
         </tr>
         <tr>
-          <td>Balance (SOL)</td>
+          <td>Balance (DOMI)</td>
           <td className="text-lg-end text-uppercase">
-            <SolBalance lamports={account.lamports} />
+            <DomiBalance lamports={account.lamports} />
           </td>
         </tr>
         {account.space !== undefined && (

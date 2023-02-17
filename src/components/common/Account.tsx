@@ -1,7 +1,7 @@
 import React from "react";
 import { Address } from "./Address";
 import { Account } from "providers/accounts";
-import { SolBalance } from "components/common/SolBalance";
+import { DomiBalance } from "components/common/DomiBalance";
 
 type AccountHeaderProps = {
   title: string;
@@ -39,9 +39,9 @@ export function AccountBalanceRow({ account }: AccountProps) {
   const { lamports } = account;
   return (
     <tr>
-      <td>Balance (SOL)</td>
+      <td>Balance (DOMI)</td>
       <td className="text-lg-end text-uppercase">
-        <SolBalance lamports={lamports} />
+        <DomiBalance lamports={lamports} />
       </td>
     </tr>
   );

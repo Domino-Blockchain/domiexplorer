@@ -5,7 +5,7 @@ import {
   TransactionInstruction,
 } from "@solana/web3.js";
 import { InstructionCard } from "./InstructionCard";
-import { SolBalance } from "components/common/SolBalance";
+import { DomiBalance } from "components/common/DomiBalance";
 import { Address } from "components/common/Address";
 import { reportError } from "utils/sentry";
 import { microLamportsToLamportsString } from "utils";
@@ -57,9 +57,9 @@ export function ComputeBudgetDetailsCard({
             </tr>
 
             <tr>
-              <td>Additional Fee (SOL)</td>
+              <td>Additional Fee (DOMI)</td>
               <td className="text-lg-end">
-                <SolBalance lamports={additionalFee} />
+                <DomiBalance lamports={additionalFee} />
               </td>
             </tr>
           </InstructionCard>

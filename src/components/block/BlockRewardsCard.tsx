@@ -1,5 +1,5 @@
 import React from "react";
-import { SolBalance } from "components/common/SolBalance";
+import { DomiBalance } from "components/common/DomiBalance";
 import { PublicKey, VersionedBlockResponse } from "@solana/web3.js";
 import { Address } from "components/common/Address";
 
@@ -50,11 +50,11 @@ export function BlockRewardsCard({ block }: { block: VersionedBlockResponse }) {
                   </td>
                   <td>{reward.rewardType}</td>
                   <td>
-                    <SolBalance lamports={reward.lamports} />
+                    <DomiBalance lamports={reward.lamports} />
                   </td>
                   <td>
                     {reward.postBalance ? (
-                      <SolBalance lamports={reward.postBalance} />
+                      <DomiBalance lamports={reward.postBalance} />
                     ) : (
                       "-"
                     )}

@@ -1,6 +1,6 @@
 import React from "react";
 import * as Cache from "providers/cache";
-import { Connection, EpochSchedule } from "@solana/web3.js";
+import {Connection, EpochSchedule, VersionedBlockResponse} from "@solana/web3.js";
 import { useCluster, Cluster } from "./cluster";
 import { reportError } from "utils/sentry";
 
@@ -20,6 +20,7 @@ type Epoch = {
   firstTimestamp: number | null;
   lastBlock?: number;
   lastTimestamp: number | null;
+  lastBlocksData: (VersionedBlockResponse | null)[];
 };
 
 type State = Cache.State<Epoch>;
@@ -111,11 +112,23 @@ export async function fetchEpoch(
       lastBlock ? connection.getBlockTime(lastBlock) : null,
     ]);
 
+    const lastBlocks = await connection.getBlocks(
+      Math.max(0, lastSlot - 10_000),
+      lastSlot
+    );
+
+    const lastBlocksData = await Promise.all(
+      lastBlocks.slice(-100).map(slot => connection.getBlock(slot, {
+        maxSupportedTransactionVersion: 0,
+      }))
+    );
+
     data = {
       firstBlock,
       lastBlock,
       firstTimestamp,
       lastTimestamp,
+      lastBlocksData,
     };
     status = FetchStatus.Fetched;
   } catch (err) {

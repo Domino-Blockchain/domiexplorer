@@ -15,9 +15,12 @@ import { pickClusterParams, useQuery } from "utils/url";
 import { useCluster } from "providers/cluster";
 import { displayAddress } from "utils/tx";
 import { parseProgramLogs } from "utils/program-logs";
-import { SolBalance } from "components/common/SolBalance";
+import { DomiBalance } from "components/common/DomiBalance";
+import {Slot} from "../common/Slot";
+import Moment from "react-moment";
 
 const PAGE_SIZE = 25;
+const MAIN_SCREEN_PAGE_SIZE = 6;
 
 const useQueryProgramFilter = (query: URLSearchParams): string => {
   const filter = query.get("filter");
@@ -293,7 +296,7 @@ export function BlockHistoryCard({ block }: { block: VersionedBlockResponse }) {
 
                     <td className="text-end">
                       {tx.meta !== null ? (
-                        <SolBalance lamports={tx.meta.fee} />
+                        <DomiBalance lamports={tx.meta.fee} />
                       ) : (
                         "Unknown"
                       )}
@@ -348,6 +351,451 @@ export function BlockHistoryCard({ block }: { block: VersionedBlockResponse }) {
         </div>
       )}
     </div>
+  );
+}
+
+export function BlockHistoryBody({ blocks }: { blocks: (VersionedBlockResponse | null)[] }) {
+  const [numDisplayed, setNumDisplayed] = React.useState(MAIN_SCREEN_PAGE_SIZE);
+  const query = useQuery();
+  const sortMode = useQuerySort(query);
+  const { cluster } = useCluster();
+  const location = useLocation();
+  const history = useHistory();
+
+  const { transactions } = React.useMemo(() => {
+    const isNotNull = <T,>(t: T | null): t is T => t !== null;
+    const transactions: TransactionWithInvocations[] = blocks
+      .filter(isNotNull)
+      .flatMap(block => block.transactions)
+      .map((tx, index) => {
+        let signature: TransactionSignature | undefined;
+        if (tx.transaction.signatures.length > 0) {
+          signature = tx.transaction.signatures[0];
+        }
+
+        let programIndexes = tx.transaction.message.compiledInstructions
+          .map((ix) => ix.programIdIndex)
+          .concat(
+            tx.meta?.innerInstructions?.flatMap((ix) => {
+              return ix.instructions.map((ix) => ix.programIdIndex);
+            }) || []
+          );
+
+        const indexMap = new Map<number, number>();
+        programIndexes.forEach((programIndex) => {
+          const count = indexMap.get(programIndex) || 0;
+          indexMap.set(programIndex, count + 1);
+        });
+
+        const invocations = new Map<string, number>();
+        const accountKeys = tx.transaction.message.getAccountKeys({
+          accountKeysFromLookups: tx.meta?.loadedAddresses,
+        });
+        for (const [i, count] of indexMap.entries()) {
+          const programId = accountKeys.get(i)!.toBase58();
+          invocations.set(programId, count);
+        }
+
+        let logTruncated = false;
+        let computeUnits: number | undefined = undefined;
+        try {
+          const parsedLogs = parseProgramLogs(
+            tx.meta?.logMessages ?? [],
+            tx.meta?.err ?? null,
+            cluster
+          );
+
+          logTruncated = parsedLogs[parsedLogs.length - 1].truncated;
+          computeUnits = parsedLogs
+            .map(({ computeUnits }) => computeUnits)
+            .reduce((sum, next) => sum + next);
+        } catch (err) {
+          // ignore parsing errors because some old logs aren't parsable
+        }
+
+        return {
+          index,
+          signature,
+          meta: tx.meta,
+          invocations,
+          computeUnits,
+          logTruncated,
+        };
+      }
+    );
+    return { transactions };
+  }, [blocks, cluster]);
+
+  const [filteredTransactions, showComputeUnits] = React.useMemo((): [
+    TransactionWithInvocations[],
+    boolean
+  ] => {
+    const showComputeUnits = transactions.every(
+      (tx) => tx.computeUnits !== undefined
+    );
+
+    if (sortMode === "compute" && showComputeUnits) {
+      transactions.sort((a, b) => b.computeUnits! - a.computeUnits!);
+    } else if (sortMode === "fee") {
+      transactions.sort((a, b) => (b.meta?.fee || 0) - (a.meta?.fee || 0));
+    }
+
+    return [transactions, showComputeUnits];
+  }, [
+    transactions,
+    sortMode,
+  ]);
+
+  return (
+    <>
+      {filteredTransactions.length === 0 ? (
+        <div className="card-body">
+          {"This epoch doesn't contain any non-vote transactions"}
+        </div>
+      ) : (
+        <div className="table-responsive mb-0">
+          <table className="table table-sm table-nowrap card-table">
+            <thead>
+              <tr>
+                <th
+                  className="text-muted c-pointer"
+                  onClick={() => {
+                    query.delete("sort");
+                    history.push(pickClusterParams(location, query));
+                  }}
+                >
+                  #
+                </th>
+                <th className="text-muted">Result</th>
+                <th className="text-muted">Transaction Signature</th>
+                <th
+                  className="text-muted text-end c-pointer"
+                  onClick={() => {
+                    query.set("sort", "fee");
+                    history.push(pickClusterParams(location, query));
+                  }}
+                >
+                  Fee
+                </th>
+                {showComputeUnits && (
+                  <th
+                    className="text-muted text-end c-pointer"
+                    onClick={() => {
+                      query.set("sort", "compute");
+                      history.push(pickClusterParams(location, query));
+                    }}
+                  >
+                    Compute
+                  </th>
+                )}
+                <th className="text-muted">Invoked Programs</th>
+              </tr>
+            </thead>
+            <tbody className="list">
+              {filteredTransactions.slice(0, numDisplayed).map((tx, i) => {
+                let statusText;
+                let statusClass;
+                let signature: React.ReactNode;
+                if (tx.meta?.err || !tx.signature) {
+                  statusClass = "warning";
+                  statusText = "Failed";
+                } else {
+                  statusClass = "success";
+                  statusText = "Success";
+                }
+
+                if (tx.signature) {
+                  signature = (
+                    <Signature
+                      signature={tx.signature}
+                      link
+                      truncateChars={48}
+                    />
+                  );
+                }
+
+                const entries = [...tx.invocations.entries()];
+                entries.sort();
+
+                return (
+                  <tr key={i}>
+                    <td>{tx.index + 1}</td>
+                    <td>
+                      <span className={`badge bg-${statusClass}-soft`}>
+                        {statusText}
+                      </span>
+                    </td>
+
+                    <td>{signature}</td>
+
+                    <td className="text-end">
+                      {tx.meta !== null ? (
+                        <DomiBalance lamports={tx.meta.fee} />
+                      ) : (
+                        "Unknown"
+                      )}
+                    </td>
+
+                    {showComputeUnits && (
+                      <td className="text-end">
+                        {tx.logTruncated && ">"}
+                        {tx.computeUnits !== undefined
+                          ? new Intl.NumberFormat("en-US").format(
+                              tx.computeUnits
+                            )
+                          : "Unknown"}
+                      </td>
+                    )}
+                    <td>
+                      {tx.invocations.size === 0
+                        ? "NA"
+                        : entries.map(([programId, count], i) => {
+                            return (
+                              <div
+                                key={i}
+                                className="d-flex align-items-center"
+                              >
+                                <Address
+                                  pubkey={new PublicKey(programId)}
+                                  link
+                                />
+                                <span className="ms-2 text-muted">{`(${count})`}</span>
+                              </div>
+                            );
+                          })}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {filteredTransactions.length > numDisplayed && (
+        <div className="card-footer">
+          <button
+            className="btn btn-primary w-100"
+            onClick={() =>
+              setNumDisplayed((displayed) => displayed + MAIN_SCREEN_PAGE_SIZE)
+            }
+          >
+            Load More
+          </button>
+        </div>
+      )}
+    </>
+  );
+
+  // return (
+  //   <>
+  //     {filteredTransactions.slice(0, PAGE_SIZE).map((tx, i) => {
+  //       let statusText;
+  //       let statusClass;
+  //       let signature: React.ReactNode;
+  //       if (tx.meta?.err || !tx.signature) {
+  //         statusClass = "warning";
+  //         statusText = "Failed";
+  //       } else {
+  //         statusClass = "success";
+  //         statusText = "Success";
+  //       }
+  //
+  //       if (tx.signature) {
+  //         signature = (
+  //           <Signature
+  //             signature={tx.signature}
+  //             link
+  //             truncateChars={48}
+  //           />
+  //         );
+  //       }
+  //
+  //       const entries = [...tx.invocations.entries()];
+  //       entries.sort();
+  //
+  //       return (
+  //         <tr key={`${tx.index}-${tx.signature}-${i}`}>
+  //           <td>{tx.index + 1}</td>
+  //           <td>
+  //             <span className={`badge bg-${statusClass}-soft`}>
+  //               {statusText}
+  //             </span>
+  //           </td>
+  //
+  //           <td>{signature}</td>
+  //
+  //           <td className="text-end">
+  //             {tx.meta !== null ? (
+  //               <DomiBalance lamports={tx.meta.fee} />
+  //             ) : (
+  //               "Unknown"
+  //             )}
+  //           </td>
+  //
+  //           {showComputeUnits && (
+  //             <td className="text-end">
+  //               {tx.logTruncated && ">"}
+  //               {tx.computeUnits !== undefined
+  //                 ? new Intl.NumberFormat("en-US").format(
+  //                     tx.computeUnits
+  //                   )
+  //                 : "Unknown"}
+  //             </td>
+  //           )}
+  //           <td>
+  //             {tx.invocations.size === 0
+  //               ? "NA"
+  //               : entries.map(([programId, count], i) => {
+  //                 return (
+  //                   <div
+  //                     key={i}
+  //                     className="d-flex align-items-center"
+  //                   >
+  //                     <Address
+  //                       pubkey={new PublicKey(programId)}
+  //                       link
+  //                     />
+  //                     <span className="ms-2 text-muted">{`(${count})`}</span>
+  //                   </div>
+  //                 );
+  //               })}
+  //           </td>
+  //         </tr>
+  //       );
+  //     })}
+  //   </>
+  // );
+}
+
+export function MultipleBlocksBody({ blocks }: { blocks: (VersionedBlockResponse | null)[] }) {
+  const [numDisplayed, setNumDisplayed] = React.useState(MAIN_SCREEN_PAGE_SIZE);
+  const query = useQuery();
+  const location = useLocation();
+  const history = useHistory();
+
+  const { filteredBlocks } = React.useMemo(() => {
+    const isNotNull = <T,>(t: T | null): t is T => t !== null;
+    const filteredBlocks: VersionedBlockResponse[] = blocks.filter(isNotNull);
+    filteredBlocks.sort((a, b) => b.parentSlot - a.parentSlot)
+    return { filteredBlocks };
+  }, [blocks]);
+
+  return (
+    <>
+      {filteredBlocks.length === 0 ? (
+        <div className="card-body">
+          {"This epoch doesn't contain any blocks"}
+        </div>
+      ) : (
+        <div className="table-responsive mb-0">
+          <table className="table table-sm table-nowrap card-table">
+            <thead>
+              <tr>
+                <th
+                  className="text-muted w-1"
+                  onClick={() => {
+                    query.delete("sort");
+                    history.push(pickClusterParams(location, query));
+                  }}
+                >
+                  Block
+                </th>
+                <th className="text-muted">Blockhash</th>
+                <th
+                  className="text-muted text-end c-pointer"
+                  onClick={() => {
+                    query.set("sort", "fee");
+                    history.push(pickClusterParams(location, query));
+                  }}
+                >
+                  Reward
+                </th>
+                <th className="text-muted">Transactions</th>
+                <th className="text-muted w-1">Age</th>
+              </tr>
+            </thead>
+            <tbody className="list">
+              {filteredBlocks.slice(0, numDisplayed).map((block, i) => {
+                let signature: React.ReactNode;
+
+                if (block.blockhash) {
+                  signature = (
+                    <Signature
+                      signature={block.blockhash}
+                      // link
+                      truncateChars={48}
+                    />
+                  );
+                }
+
+                let rewards = 0;
+                if (block.rewards !== undefined) {
+                  block.rewards.forEach(reward => {
+                    rewards += reward.lamports;
+                  })
+                }
+
+                return (
+                  <tr key={i}>
+                    <td className="w-1">
+                      <Slot slot={block.parentSlot + 1} link />
+                    </td>
+
+                    <td>{signature}</td>
+
+                    <td className="text-end">
+                      {block.rewards !== undefined ? (
+                        <DomiBalance lamports={rewards} />
+                      ) : (
+                        "Unknown"
+                      )}
+                    </td>
+
+                    <td>{block.transactions.length}</td>
+
+                    <td className="text-muted">
+                      {block.blockTime ? <Moment date={block.blockTime * 1000} fromNow /> : "---"}
+                    </td>
+
+                    {/*<td>*/}
+                    {/*  {tx.invocations.size === 0*/}
+                    {/*    ? "NA"*/}
+                    {/*    : entries.map(([programId, count], i) => {*/}
+                    {/*        return (*/}
+                    {/*          <div*/}
+                    {/*            key={i}*/}
+                    {/*            className="d-flex align-items-center"*/}
+                    {/*          >*/}
+                    {/*            <Address*/}
+                    {/*              pubkey={new PublicKey(programId)}*/}
+                    {/*              link*/}
+                    {/*            />*/}
+                    {/*            <span className="ms-2 text-muted">{`(${count})`}</span>*/}
+                    {/*          </div>*/}
+                    {/*        );*/}
+                    {/*      })}*/}
+                    {/*</td>*/}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {filteredBlocks.length > numDisplayed && (
+        <div className="card-footer">
+          <button
+            className="btn btn-primary w-100"
+            onClick={() =>
+              setNumDisplayed((displayed) => displayed + MAIN_SCREEN_PAGE_SIZE)
+            }
+          >
+            Load More
+          </button>
+        </div>
+      )}
+    </>
   );
 }
 

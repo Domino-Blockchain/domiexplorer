@@ -2,7 +2,7 @@ import React from "react";
 import { PACKET_DATA_SIZE, VersionedMessage } from "@solana/web3.js";
 
 import { TableCardBody } from "components/common/TableCardBody";
-import { SolBalance } from "components/common/SolBalance";
+import { DomiBalance } from "components/common/DomiBalance";
 import { useQuery } from "utils/url";
 import { useHistory, useLocation } from "react-router";
 import {
@@ -346,7 +346,7 @@ function OverviewCard({
             <td>Fees</td>
             <td className="text-lg-end">
               <div className="d-flex align-items-end flex-column">
-                <SolBalance lamports={fee} />
+                <DomiBalance lamports={fee} />
                 <span className="text-muted">
                   {`Each signature costs ${DEFAULT_FEES.lamportsPerSignature} lamports`}
                 </span>
